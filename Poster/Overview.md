@@ -16,20 +16,21 @@ This poster highlights the assets and datasets available from the OOI Global Oce
 
 <figure>
 <img src="figures/global_array_schematic.png">
-<figcaption align="center"><b>Figure 2: Schematic of an OOI Global Array mooring arrangement.</b></figcaption>
+<figcaption align="left"><b>Figure 2: Schematic of an OOI Global Array mooring arrangement.</b></figcaption>
 </figure>
 
 <figure>
 <img src="figures/assets.png">
-<figcaption align="center"><b>Figure 3 (clockwise from top left): A global hybrid  wire-following-profile mooring being deployed; two global open ocean gliders; a global surface mooring being deployed; a wire-following profiler.</figcaption>
-</figure>
+<figcaption align="left"><b>Figure 3 (clockwise from top left): A global hybrid  wire-following-profile mooring being deployed; two global open ocean gliders; a global surface mooring being deployed; a wire-following profiler.</figcaption>
+</figure><b>
 <b>
+
 
 The assets deployed at OOI measure a range of physical, chemical, and biological parameters. Additionally, OOI collects water samples during each deployment and recovery of each instrument on the moorings, and have them analyzed for a full-suite of parameters. Analysis include oxygen, salinity, nutrients (nitrate, nitrite, ammonium, phosphate, silicate), chlorophyll, and carbon system. A summary of the available sensors and water sampling are shown in the table below.
 
 <figure>
 <img src="figures/Table_of_data_and_assets.png">
-<figcaption align="center"><b>Table 1. Table of available datasets on different platforms at the OOI Papa array along with discrete water sampling, which occurs during deployment/recovery.</figcaption>
+<figcaption align="left"><b>Table 1. Table of available datasets on different platforms at the OOI Papa array along with discrete water sampling, which occurs during deployment/recovery.</figcaption>
 </figure>
 
 ### Major Science Themes

@@ -12,11 +12,24 @@ The example given below are for use with a terminal window. If you are on a wind
 
 1. **OOI Credentials**
 In order to download data from the OOI data portal and via the M2M API, you first need to register at ooinet.oceanobseravtories.org and get an API username and token. If you have not done so, follow these steps:
-* Navigate to the [OOI Data Portal](ooinet.oceanobseravtories.org)
-* At the upper right of the page, click the "login"
-* Save the "API Username" and "API Token"
+  *  Navigate to the [OOI Data Portal](ooinet.oceanobseravtories.org)
+  * At the upper right of the page, click the "login"
+  * Once you are logged in, navigate to your user profile in the upper right of the screen.
 
-Following the
+  <figure>
+  <img src="figures/user_profile_screen.png">
+  </figure><b>
+
+
+  * On your user profile page, save the "API Username" and "API Token"
+
+  <figure>
+  <img src="figures/api_credentials.png">
+  </figure>
+
+2. **Save your credetials**
+
+  Following the instructions from the ooi-data-explorations, we'll utilize the netrc module to store your credentials on your local machine.
 ```
 cd ~
 touch .netrc
@@ -28,25 +41,25 @@ machine ooinet.oceanobservatories.org
 EOT
 ```
 
-2. **Get the repo**
-Next, clone the repo to your local machine
+3. **Get the repo**
+
+  Next, you can follow the instructions on gitHub to clone the repo to your machine:
 ```
 # Navigate to where you want to store the repo
 cd ~/Documents/
 git clone git@github.com:reedan88/NE-Pacific-Community-Workshop
 ```
 
-3. **Setup python environment**
-Its recommended that miniconda or anaconda3 has been installed. Next, you can simply
+4. **Setup python environment**
 
-Next, you want to configure the python environment for this repo:
+  ts recommended that miniconda or anaconda3 has been installed.  Then you can make the local environment directly from the environment.yaml file included in this repo:
 
     ```
     conda env create -f environment.yaml
     conda activate ne_pacific_community_workshop
     ```
 
-2. **Launch jupyter notebooks**
+5. **Launch jupyter notebooks**
 Now you are ready to get working with OOI data! Launch a jupyter notebook in your browser and get ready to explore OOI carbon system data.
 
 ---
