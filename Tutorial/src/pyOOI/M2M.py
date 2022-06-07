@@ -9,6 +9,7 @@ import pandas as pd
 import xarray as xr
 from halo import HaloNotebook
 from bs4 import BeautifulSoup
+from urllib.request import urlretrieve
 
 # Initialize credentials
 try:
@@ -670,7 +671,7 @@ def get_thredds_url(refdes, method, stream, goldCopy=False, **kwargs):
             "require_deployment":True
         })
     params = kwargs
-    
+
     # Request the data
     with HaloNotebook(text="Waiting for request to process", spinner="clock"):
         # Get the urls
@@ -682,13 +683,13 @@ def get_thredds_url(refdes, method, stream, goldCopy=False, **kwargs):
         while status.status_code != requests.codes.ok:
             time.sleep(2)
             status = SESSION.get(status_url)
-        
+
     # The asynchronous data request is contained in the 'allURLs' key,
     # in which we want to find the url to the thredds server
     for d in urls['allURLs']:
         if 'thredds' in d:
             thredds_url = d
-            
+
     return thredds_url
 
 
@@ -714,7 +715,7 @@ def get_thredds_catalog(thredds_url):
 
     # Return the catalog
     return catalog
-   
+
 
 def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
     """Download netCDF files for given netCDF datasets.
@@ -747,7 +748,7 @@ def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
             os.makedirs(saveDir)
     else:
         saveDir = os.getcwd()
-        
+
     # Step 3 - Download the files to the specified save directory
     with HaloNotebook(f"Downloading...", spinner="clock"):
         for file in netCDF_files:
