@@ -7,9 +7,14 @@ import datetime
 import numpy as np
 import pandas as pd
 import xarray as xr
+from queue import Queue
 from halo import HaloNotebook
 from bs4 import BeautifulSoup
 from urllib.request import urlretrieve
+
+# Import shared utilies
+from utils import ntp_seconds_to_datetime, convert_time, unix_epoch_time
+from Download import setup_download_dir, download_file, DownloadWorker
 
 # Initialize credentials
 try:
@@ -42,31 +47,6 @@ URLS = {
 SESSION = requests.Session()
 adapter = requests.adapters.HTTPAdapter(max_retries=0)
 SESSION.mount("https://", adapter)
-
-
-def ntp_seconds_to_datetime(ntp_seconds):
-    """Convert OOINet timestamps to unix-convertable timestamps."""
-    # Specify some constant needed for timestamp conversions
-    ntp_epoch = datetime.datetime(1900, 1, 1)
-    unix_epoch = datetime.datetime(1970, 1, 1)
-    ntp_delta = (unix_epoch - ntp_epoch).total_seconds()
-
-    return datetime.datetime.utcfromtimestamp(ntp_seconds - ntp_delta)
-
-
-def convert_time(ms):
-    """Calculate UTC timestamp from OOI milliseconds"""
-    if ms is None:
-        return None
-    else:
-        return datetime.datetime.utcfromtimestamp(ms/1000)
-
-
-def unix_epoch_time(date_time):
-    """Convert a datetime to unix epoch microseconds."""
-    # Convert the date time to a string
-    date_time = int(pd.to_datetime(date_time).strftime("%s"))*1000
-    return date_time
 
 
 def get_api(url, params=None):
@@ -717,7 +697,7 @@ def get_thredds_catalog(thredds_url):
     return catalog
 
 
-def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
+def download_netCDF_files(catalog, goldCopy=False, saveDir=None, verbose=True):
     """Download netCDF files for given netCDF datasets.
 
     Downloads the netCDF files returned by parse_catalog. If no path is
@@ -733,6 +713,8 @@ def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
     saveDir: (str)
         The path to the directory where to download the netCDF files. If no path
         is specified will download to your current directory
+    verbose: (boolean)
+        If True, show status of download.
     """
     # Step 1 - parse the catalog to get the correct web address to download the files
     if goldCopy is True:
@@ -742,17 +724,23 @@ def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
     netCDF_files = [re.sub("catalog.html\?dataset=", fileServer, file) for file in catalog]
 
     # Step 2 - Specify and make the relevant save directory
-    if saveDir is not None:
-        # Make the save directory if it doesn't exists
-        if not os.path.exists(saveDir):
-            os.makedirs(saveDir)
-    else:
-        saveDir = os.getcwd()
+    setup_download_dir(saveDir)
 
-    # Step 3 - Download the files to the specified save directory
+    # Step 3 - Initialize workers
+    # 3A. Identify number availabe cores and divide in half
+    cores = os.cpu_count()
+    workers = int(cores / 2)
+    # 3B. Setup a Queue
+    queue = Queue()
+    # 3C. Start workers
+    for worker in range(workers):
+        worker = DownloadWorker(queue)
+        worker.daemon = True
+        worker.start()
+
+    # Step 4. Execute the processes and download the files        
     with HaloNotebook(f"Downloading...", spinner="clock"):
         for file in netCDF_files:
-            filename = file.split("/")[-1]
-            saveFile = "/".join((saveDir, filename))
-            print(f"Saving {filename} to {saveFile} \n")
-            urlretrieve(file, saveFile)
+            queue.put((saveDir, file))
+        # Execute
+        queue.join()
