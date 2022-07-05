@@ -1,5 +1,5 @@
 import os
-from urllib import urlretrieve
+from urllib.request import urlretrieve
 from queue import Queue
 from threading import Thread
 

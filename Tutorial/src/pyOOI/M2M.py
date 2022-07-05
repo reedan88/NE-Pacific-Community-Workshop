@@ -744,3 +744,53 @@ def download_netCDF_files(catalog, goldCopy=False, saveDir=None, verbose=True):
             queue.put((saveDir, file))
         # Execute
         queue.join()
+        
+        
+def clean_catalog(catalog, stream, deployments):
+    """Clean up the THREDDS catalog of unwanted datasets"""
+    # Parse the netCDF datasets to only get those with the datastream in its name
+    datasets = []
+    for dset in catalog:
+        check = dset.split("/")[-1]
+        if stream in check:
+            datasets.append(dset)
+        else:
+            pass
+    
+    # Next, check that the netCDF datasets are not empty by getting the timestamps in the
+    # datasets and checking if they are 
+    catalog = datasets
+    datasets = []
+    for dset in catalog:
+        # Get the timestamps
+        timestamps = dset.split("_")[-1].replace(".nc","").split("-")
+        t1, t2 = timestamps
+        # Check if the timestamps are equal
+        if t1 == t2:
+            pass
+        else:
+            datasets.append(dset)
+            
+    # Next, determine if the dataset is either for the given instrument
+    # or an ancillary instrument which supplies and input variable
+    catalog = datasets
+    datasets = []
+    ancillary = []
+    for dset in catalog:
+        if re.search(stream, dset.split("/")[-1]) is None:
+            ancillary.append(dset)
+        else:
+            datasets.append(dset)
+            
+    # Finally, check that deployment numbers match what is in deployments metadata
+    catalog = datasets
+    datasets = []
+    for dset in catalog:
+        dep = re.findall("deployment[\d]{4}", dset)[0]
+        depNum = int(dep[-4:])
+        if depNum not in list(deployments["deploymentNumber"]):
+            pass
+        else:
+            datasets.append(dset)
+            
+    return datasets
